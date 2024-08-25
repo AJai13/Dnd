@@ -42,7 +42,7 @@ import racas.Drow
 fun main() {
     println("\n#===== Bem-vindo à criação de personagens de D&D!! =====#\n")
 
-    //1. Escolher nome do personagen
+    // 1. Escolher nome do personagen
     var nome: String?
     var confirmacao: String?
 
@@ -52,28 +52,9 @@ fun main() {
         println("O nome do seu personagem: $nome")
         println("Está correto? (s/n)")
         confirmacao = readLine()
-
-//        if (confirmacao == "n") {
-////            println("Digite o nome do seu personagem novamente:")
-////            readLine().also { nome = it }
-//            println("O nome do seu personagem: $nome")
-//        }
-
     } while (confirmacao != "s")
 
     println("Nome confirmado: $nome")
-
-//    println("\nEscolha o nome do seu personagem:")
-//    var nome = readLine()
-//    println("O nome do seu personagem: $nome")
-//    println("Está correto? (s/n)")
-//    val confirmacao = readLine()
-//    if (confirmacao == "n") {
-//        println("Digite o nome do seu personagem novamente:")
-//        readLine().also { nome = it }
-//        println("O nome do seu personagem: $nome")
-//    }
-
 
     // 2. Escolha de Raça
     val listaRacas = mapOf(
