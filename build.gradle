@@ -1,0 +1,31 @@
+// Apply the java plugin to add support for Java
+plugins {
+    id 'com.android.library'
+}
+
+// Set the Java version for the project (e.g., Java 17)
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(22) // Change 17 to your desired version
+    }
+}
+
+// Set the repositories for dependency resolution
+repositories {
+    // Use Maven Central for resolving dependencieslll
+    mavenCentral()
+}
+
+// Declare the dependencies for your project
+dependencies {
+    // Example dependencies (you can add more based on your needs)
+    implementation 'org.slf4j:slf4j-api:1.7.25'
+
+    // Test dependencies
+    testImplementation 'junit:junit:4.12'
+}
+
+// Optionally, specify the Gradle wrapper version for consistency
+wrapper {
+    gradleVersion = '8.8'  // Update to the latest version compatible with your Java version
+}p
