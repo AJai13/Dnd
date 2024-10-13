@@ -1,3 +1,5 @@
+package up.dndback.classes
+
 interface iClasses {
     val nome: String
     val dadoDeVida: Int

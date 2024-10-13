@@ -1,5 +1,5 @@
 package racas
-import Personagem
+import up.dndback.Personagem
 
 
 class GnomoDasRochas : racas.iRacas {

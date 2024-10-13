@@ -1,6 +1,6 @@
 package racas
 
-import Personagem
+import up.dndback.Personagem
 
 interface iRacas {
     val nome: String

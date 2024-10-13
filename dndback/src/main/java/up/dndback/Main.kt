@@ -127,7 +127,7 @@
 //        11 to Monge(),
 //        12 to Patrulheiro()
 //    )
-//    var classe: iClasses?
+//    var classe: up.dndback.classes.iClasses?
 //    var classeEscolhida: Int?
 //
 //    while(true) {

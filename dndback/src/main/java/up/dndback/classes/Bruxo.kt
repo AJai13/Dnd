@@ -1,5 +1,5 @@
 package classes
-import iClasses
+import up.dndback.classes.iClasses
 
 class Bruxo : iClasses {
     override val nome = "Bruxo"

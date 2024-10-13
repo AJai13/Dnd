@@ -1,9 +1,11 @@
+package up.dndback
+import up.dndback.classes.iClasses
 import java.util.*
 
 class Personagem(
     val nome: String,
     val raca: racas.iRacas?,
-    //val classe: iClasses?,
+    val classe: iClasses?,
     var forca: Int = 8,
     var destreza: Int = 8,
     var constituicao: Int = 8,

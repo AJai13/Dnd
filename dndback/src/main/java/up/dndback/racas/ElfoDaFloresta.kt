@@ -1,5 +1,5 @@
 package racas
-import Personagem
+import up.dndback.Personagem
 
 class ElfoDaFloresta : racas.iRacas {
     override val nome = "Elfo da Floresta"
