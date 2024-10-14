@@ -1,4 +1,5 @@
 package racas
+
 import up.dndback.Personagem
 
 class Anao : iRacas {

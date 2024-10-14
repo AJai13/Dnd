@@ -7,17 +7,17 @@ import androidx.room.RoomDatabase
 import up.dndfront.Atributos
 
 @Database(entities = [Atributos::class], version = 1, exportSchema = false)
-abstract class AtributosDB: RoomDatabase() {
+abstract class AtributosDB : RoomDatabase() {
 
     abstract fun atributosDAO(): AtributosDAO
 
-    companion object{
+    companion object {
 
         @Volatile
-        private var INSTANCIA: AtributosDB? =null
+        private var INSTANCIA: AtributosDB? = null
 
-        fun getDatabase(context: Context): AtributosDB{
-            return INSTANCIA ?: synchronized(this){
+        fun getDatabase(context: Context): AtributosDB {
+            return INSTANCIA ?: synchronized(this) {
                 val instancia = Room.databaseBuilder(
                     context.applicationContext,
                     AtributosDB::class.java,

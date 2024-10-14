@@ -1,4 +1,5 @@
 package classes
+
 import up.dndback.classes.iClasses
 
 class Patrulheiro : iClasses {

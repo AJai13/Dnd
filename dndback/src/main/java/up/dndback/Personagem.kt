@@ -1,26 +1,37 @@
 package up.dndback
-import up.dndback.classes.iClasses
-import java.util.*
 
-class Personagem(
-    val nome: String,
-    val raca: racas.iRacas?,
-    val classe: iClasses?,
-    var forca: Int = 8,
-    var destreza: Int = 8,
-    var constituicao: Int = 8,
-    var inteligencia: Int = 8,
-    var sabedoria: Int = 8,
-    var carisma: Int = 8,
-    var pontosDeVida: Int = 8,
-    var pontosDisponiveis: Int = 27
-){
+import up.dndback.classes.iClasses
+import java.util.Locale
+
+class Personagem {
 
     // Tabela de custo
     private val tabelaCusto = mapOf(
         8 to 0, 9 to 1, 10 to 2, 11 to 3,
         12 to 4, 13 to 5, 14 to 7, 15 to 9
     )
+
+    var nome: String = ""
+
+    var raca: racas.iRacas? = null
+
+    var classe: iClasses? = null
+
+    var forca: Int = 8
+
+    var destreza: Int = 8
+
+    var constituicao: Int = 8
+
+    var inteligencia: Int = 8
+
+    var sabedoria: Int = 8
+
+    var carisma: Int = 8
+
+    var pontosDeVida: Int = 8
+
+    var pontosDisponiveis: Int = 27
 
     // Método para gastar pontos e aumentar o valor do atributo
     fun aumentarAtributo(atributo: String, novoValor: Int) {
@@ -32,8 +43,10 @@ class Personagem(
         if (pontosDisponiveis >= custoTotal && novoValor in 8..15) {
             pontosDisponiveis -= custoTotal
             definirValorAtributo(atributo, novoValor)
-            println("\nAtributo $atributo atualizado para $novoValor. " +
-                    "Pontos restantes: $pontosDisponiveis")
+            println(
+                "\nAtributo $atributo atualizado para $novoValor. " +
+                        "Pontos restantes: $pontosDisponiveis"
+            )
         } else {
             println("\nNão é possível atualizar $atributo para $novoValor. Pontos insuficientes ou valor inválido.")
         }
@@ -52,6 +65,7 @@ class Personagem(
             else -> 8
         }
     }
+
     private fun definirValorAtributo(atributo: String, valor: Int) {
         when (atributo.lowercase(Locale.getDefault())) {
             "forca" -> forca = valor

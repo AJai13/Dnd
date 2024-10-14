@@ -1,7 +1,8 @@
 package racas
+
 import up.dndback.Personagem
 
-class ElfoAlto : racas.iRacas {
+class ElfoAlto : iRacas {
     override val nome = "Elfo Alto"
 
     override fun aplicarBonus(personagem: Personagem) {

@@ -1,8 +1,9 @@
 package racas
+
 import up.dndback.Personagem
 
 
-class GnomoDasRochas : racas.iRacas {
+class GnomoDasRochas : iRacas {
     override val nome = "Gnomo das Rochas"
 
     override fun aplicarBonus(personagem: Personagem) {
