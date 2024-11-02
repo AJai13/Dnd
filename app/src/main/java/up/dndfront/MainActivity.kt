@@ -106,7 +106,7 @@ class MainActivity : ComponentActivity() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Personagens cadastrados: ", fontSize = 22.sp)
+            Text(text = "Personagens criados: ", fontSize = 22.sp)
             Spacer(modifier = Modifier.height(8.dp))
 
             Box {
@@ -236,7 +236,7 @@ class MainActivity : ComponentActivity() {
                         .padding(start = 8.dp)) {
                     Text(text = lista_de_classes[itemPosition.value].nome, fontSize = 22.sp)
 
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
 
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
@@ -385,11 +385,11 @@ class MainActivity : ComponentActivity() {
         }
 
         Column(modifier = Modifier.padding(start = 16.dp, top = 164.dp)) {
-            Text(text = "Pontos restantes: $pontosRestantes", fontSize = 22.sp)
-            Spacer(modifier = Modifier.height(8.dp))
-
             DropDownPersonagensScreen()
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(text = "Pontos restantes: $pontosRestantes", fontSize = 22.sp)
+            Spacer(modifier = Modifier.height(12.dp))
 
             SliderAtributo("Força", forca) { novoValor ->
                 aumentarAtributo("forca", novoValor)
@@ -436,7 +436,7 @@ class MainActivity : ComponentActivity() {
                 resetarValoresLocais()
                 showDialog = true
             }, Modifier.align(Alignment.CenterHorizontally)) {
-                Text("Salvar Personagem")
+                Text("Salvar")
             }
 
             Button(onClick = {
@@ -444,7 +444,7 @@ class MainActivity : ComponentActivity() {
                 resetAtributos()
                 resetarValoresLocais()
             }, Modifier.align(Alignment.CenterHorizontally)) {
-                Text("Deletar Personagem")
+                Text("Deletar")
             }
 
             Button(onClick = {
@@ -460,7 +460,7 @@ class MainActivity : ComponentActivity() {
                 resetAtributos()
                 resetarValoresLocais()
             }, Modifier.align(Alignment.CenterHorizontally)) {
-                Text("Atualizar Personagem")
+                Text("Atualizar")
             }
 
             if (showDialog) {
