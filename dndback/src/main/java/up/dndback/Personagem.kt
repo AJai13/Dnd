@@ -2,19 +2,30 @@ package up.dndback
 
 import up.dndback.classes.iClasses
 import java.util.Locale
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
+
+
+// Tabela de custo
+private val tabelaCusto = mapOf(
+    8 to 0, 9 to 1, 10 to 2, 11 to 3,
+    12 to 4, 13 to 5, 14 to 7, 15 to 9
+)
+
+@Entity(tableName = "personagem")
 
 class Personagem {
 
-    // Tabela de custo
-    private val tabelaCusto = mapOf(
-        8 to 0, 9 to 1, 10 to 2, 11 to 3,
-        12 to 4, 13 to 5, 14 to 7, 15 to 9
-    )
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0
 
     var nome: String = ""
 
+    @Ignore
     var raca: racas.iRacas? = null
 
+    @Ignore
     var classe: iClasses? = null
 
     var forca: Int = 8

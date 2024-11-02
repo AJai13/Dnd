@@ -2,7 +2,9 @@ package up.dndfront
 
 import Classes
 import Racas
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
@@ -28,8 +30,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,17 +41,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import up.dndback.Personagem
+import up.dndfront.data.PersonagemDAO
+import up.dndfront.data.PersonagemDB
 
 
 class MainActivity : ComponentActivity() {
-//    private var atributos = Atributos()
-//    private lateinit var atributosDAO: AtributosDAO
-
+    var personagem_selecionado_dropdown: Personagem? = null
     var personagem = Personagem()
+
+    private lateinit var personagemDAO: PersonagemDAO
+    var nome_do_personagem: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val db = PersonagemDB.getDatabase(this)
+        personagemDAO = db.personagemDAO()
         setContent {
             MainScreen()
         }
@@ -59,9 +70,59 @@ class MainActivity : ComponentActivity() {
             UsernameInputScreen()
             DropDownRacasScreen() // Exibe a seleção de raças
             DropDownClassesScreen() // Exibe a seleção de classes
+            DropDownPersonagensScreen()
         }
-        AtributosScreen { novosAtributos ->
-            saveAtributos(novosAtributos)
+        AtributosScreen(
+            onSaveClick = { novosAtributos -> saveAtributos(novosAtributos)},
+            onUpdateClick = { novosAtributos -> updatePersonagem(novosAtributos)}
+        )
+    }
+
+    @Composable
+    fun DropDownPersonagensScreen() {
+        val isDropDownExpanded = remember { mutableStateOf(false) }
+        val itemPosition = remember { mutableIntStateOf(0) }
+        var lista_de_personagens = personagemDAO.getAllPersonagem()
+        Log.println(Log.INFO, "puta que pariu", lista_de_personagens.toString())
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = "Personagem: ", fontSize = 22.sp)
+
+            Box {
+                Row(horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable {
+                        isDropDownExpanded.value = true
+                    }) {
+                    Text(text = lista_de_personagens[itemPosition.value].nome, fontSize = 22.sp)
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    // Caret icon (down arrow)
+                    Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = "DropDown Icon"
+                    )
+                }
+
+                DropdownMenu(expanded = isDropDownExpanded.value, onDismissRequest = {
+                    isDropDownExpanded.value = false
+                }) {
+                    lista_de_personagens.forEachIndexed { index, personagem ->
+                        DropdownMenuItem(text = { Text(text = personagem.nome) }, onClick = {
+                            isDropDownExpanded.value = false
+                            itemPosition.value = index
+                            personagem_selecionado_dropdown = personagem
+                        })
+                    }
+                }
+            }
         }
     }
 
@@ -180,6 +241,7 @@ class MainActivity : ComponentActivity() {
         )
 
         personagem.nome = nome
+        nome_do_personagem = nome
     }
 
     @Composable
@@ -199,7 +261,6 @@ class MainActivity : ComponentActivity() {
     }
 
 
-
     private fun saveAtributos(novosAtributos: Map<String, Int>) {
         personagem.pontosDeVida = 8
         for ((atributo, valor) in novosAtributos) {
@@ -210,10 +271,42 @@ class MainActivity : ComponentActivity() {
         if (pontos_de_vida != null) {
             personagem.pontosDeVida += pontos_de_vida
         }
+
+        lifecycleScope.launch {
+            personagemDAO.insert(personagem)
+            Log.d("Personagem", personagemDAO.getAllPersonagem().toString())
+        }
+
+    }
+
+    private fun deleteClick() {
+        lifecycleScope.launch {
+            personagemDAO.delete(personagem_selecionado_dropdown!!)
+        }
+    }
+
+    private fun updatePersonagem(novosAtributos: Map<String, Int>) {
+        personagem_selecionado_dropdown!!.pontosDeVida = 8
+        for ((atributo, valor) in novosAtributos) {
+            personagem_selecionado_dropdown!!.aumentarAtributo(atributo, valor)
+        }
+
+        var pontos_de_vida = personagem_selecionado_dropdown!!.classe?.calcularPontosDeVida(
+            personagem_selecionado_dropdown!!.constituicao
+        )
+        if (pontos_de_vida != null) {
+            personagem_selecionado_dropdown!!.pontosDeVida += pontos_de_vida
+        }
+
+        personagem_selecionado_dropdown!!.nome = nome_do_personagem
+
+        lifecycleScope.launch {
+            personagemDAO.update(personagem_selecionado_dropdown!!)
+        }
     }
 
     @Composable
-    fun AtributosScreen(onSaveClick: (Map<String, Int>) -> Unit) {
+    fun AtributosScreen(onSaveClick: (Map<String, Int>) -> Unit, onUpdateClick: (Map<String, Int>) -> Unit) {
         var forca by remember { mutableIntStateOf(personagem.forca) }
         var destreza by remember { mutableIntStateOf(personagem.destreza) }
         var constituicao by remember { mutableIntStateOf(personagem.constituicao) }
@@ -282,6 +375,24 @@ class MainActivity : ComponentActivity() {
                 Text("Salvar Atributos")
             }
 
+            Button(onClick = { deleteClick() }, Modifier.align(Alignment.CenterHorizontally)) {
+                Text("Deletar personagem")
+            }
+
+            Button(onClick = {
+                val novosAtributos = mapOf(
+                    "forca" to forca,
+                    "destreza" to destreza,
+                    "constituicao" to constituicao,
+                    "inteligencia" to inteligencia,
+                    "sabedoria" to sabedoria,
+                    "carisma" to carisma,
+                )
+                onUpdateClick(novosAtributos)
+            }, Modifier.align(Alignment.CenterHorizontally)) {
+                Text("Updateeee personagem")
+            }
+
             if (showDialog) {
                 AlertDialog(
                     onDismissRequest = { showDialog = false },
@@ -290,14 +401,20 @@ class MainActivity : ComponentActivity() {
                         Column {
                             Text(text = "Nome: ${personagem.nome}", fontSize = 18.sp)
                             Text(text = "Raça: ${personagem.raca?.nome ?: "N/A"}", fontSize = 18.sp)
-                            Text(text = "Classe: ${personagem.classe?.nome ?: "N/A"}", fontSize = 18.sp)
+                            Text(
+                                text = "Classe: ${personagem.classe?.nome ?: "N/A"}",
+                                fontSize = 18.sp
+                            )
                             Text(text = "Força: $forca", fontSize = 18.sp)
                             Text(text = "Destreza: $destreza", fontSize = 18.sp)
                             Text(text = "Constituição: $constituicao", fontSize = 18.sp)
                             Text(text = "Inteligência: $inteligencia", fontSize = 18.sp)
                             Text(text = "Sabedoria: $sabedoria", fontSize = 18.sp)
                             Text(text = "Carisma: $carisma", fontSize = 18.sp)
-                            Text(text = "Pontos de Vida: ${personagem.pontosDeVida}", fontSize = 18.sp)
+                            Text(
+                                text = "Pontos de Vida: ${personagem.pontosDeVida}",
+                                fontSize = 18.sp
+                            )
                         }
                     },
                     confirmButton = {
