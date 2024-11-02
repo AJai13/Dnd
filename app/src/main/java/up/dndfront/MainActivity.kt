@@ -1,4 +1,3 @@
-
 package up.dndfront
 
 import Classes
@@ -78,10 +77,21 @@ class MainActivity : ComponentActivity() {
 //            DropDownPersonagensScreen()
         }
         AtributosScreen(
-            onSaveClick = { novosAtributos -> saveAtributos(novosAtributos)},
-            onUpdateClick = { novosAtributos -> updatePersonagem(novosAtributos)}
+            onSaveClick = { novosAtributos -> saveAtributos(novosAtributos) },
+            onUpdateClick = { novosAtributos -> updatePersonagem(novosAtributos) }
         )
     }
+
+    fun resetAtributos() {
+        personagem.forca = 8
+        personagem.destreza = 8
+        personagem.constituicao = 8
+        personagem.inteligencia = 8
+        personagem.sabedoria = 8
+        personagem.carisma = 8
+        personagem.pontosDisponiveis = 27
+    }
+
 
     @Composable
     fun DropDownPersonagensScreen() {
@@ -315,7 +325,10 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun AtributosScreen(onSaveClick: (Map<String, Int>) -> Unit, onUpdateClick: (Map<String, Int>) -> Unit) {
+    fun AtributosScreen(
+        onSaveClick: (Map<String, Int>) -> Unit,
+        onUpdateClick: (Map<String, Int>) -> Unit
+    ) {
         var forca by remember { mutableIntStateOf(personagem.forca) }
         var destreza by remember { mutableIntStateOf(personagem.destreza) }
         var constituicao by remember { mutableIntStateOf(personagem.constituicao) }
@@ -326,6 +339,22 @@ class MainActivity : ComponentActivity() {
         var showDialog by remember { mutableStateOf(false) }
 
         var pontosRestantes by remember { mutableStateOf(personagem.pontosDisponiveis) }
+
+        // Função que redefine os valores locais ao resetar o personagem
+        fun resetarValoresLocais() {
+            forca = personagem.forca
+            destreza = personagem.destreza
+            constituicao = personagem.constituicao
+            inteligencia = personagem.inteligencia
+            sabedoria = personagem.sabedoria
+            carisma = personagem.carisma
+            pontosRestantes = personagem.pontosDisponiveis
+        }
+
+        // Observa mudanças e redefine os sliders após o reset
+        LaunchedEffect(Unit) {
+            resetarValoresLocais()
+        }
 
         fun aumentarAtributo(atributo: String, novoValor: Int) {
             personagem.aumentarAtributo(atributo, novoValor)
@@ -349,26 +378,32 @@ class MainActivity : ComponentActivity() {
 
             SliderAtributo("Força", forca) { novoValor ->
                 aumentarAtributo("forca", novoValor)
+                resetarValoresLocais()
             }
 
             SliderAtributo("Destreza", destreza) { novoValor ->
                 aumentarAtributo("destreza", novoValor)
+                resetarValoresLocais()
             }
 
             SliderAtributo("Constituição", constituicao) { novoValor ->
                 aumentarAtributo("constituicao", novoValor)
+                resetarValoresLocais()
             }
 
             SliderAtributo("Inteligência", inteligencia) { novoValor ->
                 aumentarAtributo("inteligencia", novoValor)
+                resetarValoresLocais()
             }
 
             SliderAtributo("Sabedoria", sabedoria) { novoValor ->
                 aumentarAtributo("sabedoria", novoValor)
+                resetarValoresLocais()
             }
 
             SliderAtributo("Carisma", carisma) { novoValor ->
                 aumentarAtributo("carisma", novoValor)
+                resetarValoresLocais()
             }
 
             Button(onClick = {
@@ -382,12 +417,18 @@ class MainActivity : ComponentActivity() {
 
                 )
                 onSaveClick(novosAtributos)
+                resetAtributos()
+                resetarValoresLocais()
                 showDialog = true
             }, Modifier.align(Alignment.CenterHorizontally)) {
-                Text("Salvar Atributos")
+                Text("Salvar Personagem")
             }
 
-            Button(onClick = { deleteClick() }, Modifier.align(Alignment.CenterHorizontally)) {
+            Button(onClick = {
+                deleteClick()
+                resetAtributos()
+                resetarValoresLocais()
+            }, Modifier.align(Alignment.CenterHorizontally)) {
                 Text("Deletar Personagem")
             }
 
@@ -401,8 +442,10 @@ class MainActivity : ComponentActivity() {
                     "carisma" to carisma,
                 )
                 onUpdateClick(novosAtributos)
+                resetAtributos()
+                resetarValoresLocais()
             }, Modifier.align(Alignment.CenterHorizontally)) {
-                Text("Update Personagem")
+                Text("Atualizar Personagem")
             }
 
             if (showDialog) {
