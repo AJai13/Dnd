@@ -134,6 +134,21 @@ class MainActivity : ComponentActivity() {
                             isDropDownExpanded.value = false
                             itemPosition.value = index
                             personagem_selecionado_dropdown = personagem
+
+                            // Logando os atributos do personagem selecionado
+                            Log.d("Personagem Selecionado", personagem.toString()) // Exibe o objeto do personagem
+                            Log.d("Atributos", """
+                            Nome: ${personagem.nome}
+                            Raça: ${personagem.raca?.nome ?: "N/A"}
+                            Classe: ${personagem.classe?.nome ?: "N/A"}
+                            Força: ${personagem.forca}
+                            Destreza: ${personagem.destreza}
+                            Constituição: ${personagem.constituicao}
+                            Inteligência: ${personagem.inteligencia}
+                            Sabedoria: ${personagem.sabedoria}
+                            Carisma: ${personagem.carisma}
+                            Pontos de Vida: ${personagem.pontosDeVida}
+                        """.trimIndent())
                         })
                     }
                 }
