@@ -1,3 +1,4 @@
+
 package up.dndfront
 
 import Classes
@@ -43,7 +44,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import racas.iRacas
 import up.dndback.Personagem
+import up.dndback.classes.iClasses
 import up.dndfront.data.PersonagemDAO
 import up.dndfront.data.PersonagemDB
 
@@ -54,6 +57,8 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var personagemDAO: PersonagemDAO
     var nome_do_personagem: String = ""
+    var raca_do_personagem: iRacas? = null
+    var classe_do_personagem: iClasses? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,7 +75,7 @@ class MainActivity : ComponentActivity() {
             UsernameInputScreen()
             DropDownRacasScreen() // Exibe a seleção de raças
             DropDownClassesScreen() // Exibe a seleção de classes
-            DropDownPersonagensScreen()
+//            DropDownPersonagensScreen()
         }
         AtributosScreen(
             onSaveClick = { novosAtributos -> saveAtributos(novosAtributos)},
@@ -83,16 +88,16 @@ class MainActivity : ComponentActivity() {
         val isDropDownExpanded = remember { mutableStateOf(false) }
         val itemPosition = remember { mutableIntStateOf(0) }
         var lista_de_personagens = personagemDAO.getAllPersonagem()
-        Log.println(Log.INFO, "puta que pariu", lista_de_personagens.toString())
+        Log.println(Log.INFO, "lista de personagens", lista_de_personagens.toString())
 
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Personagem: ", fontSize = 22.sp)
+            Text(text = "Personagens cadastrados: ", fontSize = 22.sp)
+            Spacer(modifier = Modifier.height(8.dp))
 
             Box {
                 Row(horizontalArrangement = Arrangement.Center,
@@ -168,6 +173,7 @@ class MainActivity : ComponentActivity() {
                             isDropDownExpanded.value = false
                             itemPosition.value = index
                             personagem.raca = lista_de_racas[itemPosition.value]
+                            raca_do_personagem = lista_de_racas[itemPosition.value]
                         })
                     }
                 }
@@ -221,6 +227,7 @@ class MainActivity : ComponentActivity() {
                             isDropDownExpanded.value = false
                             itemPosition.value = index
                             personagem.classe = lista_de_classes[itemPosition.value]
+                            classe_do_personagem = lista_de_classes[itemPosition.value]
                         })
                     }
                 }
@@ -299,6 +306,8 @@ class MainActivity : ComponentActivity() {
         }
 
         personagem_selecionado_dropdown!!.nome = nome_do_personagem
+        personagem_selecionado_dropdown!!.raca = raca_do_personagem
+        personagem_selecionado_dropdown!!.classe = classe_do_personagem
 
         lifecycleScope.launch {
             personagemDAO.update(personagem_selecionado_dropdown!!)
@@ -333,6 +342,9 @@ class MainActivity : ComponentActivity() {
 
         Column(modifier = Modifier.padding(start = 16.dp, top = 164.dp)) {
             Text(text = "Pontos restantes: $pontosRestantes", fontSize = 22.sp)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            DropDownPersonagensScreen()
             Spacer(modifier = Modifier.height(8.dp))
 
             SliderAtributo("Força", forca) { novoValor ->
@@ -371,12 +383,12 @@ class MainActivity : ComponentActivity() {
                 )
                 onSaveClick(novosAtributos)
                 showDialog = true
-            }) {
+            }, Modifier.align(Alignment.CenterHorizontally)) {
                 Text("Salvar Atributos")
             }
 
             Button(onClick = { deleteClick() }, Modifier.align(Alignment.CenterHorizontally)) {
-                Text("Deletar personagem")
+                Text("Deletar Personagem")
             }
 
             Button(onClick = {
@@ -390,7 +402,7 @@ class MainActivity : ComponentActivity() {
                 )
                 onUpdateClick(novosAtributos)
             }, Modifier.align(Alignment.CenterHorizontally)) {
-                Text("Updateeee personagem")
+                Text("Update Personagem")
             }
 
             if (showDialog) {
